@@ -1,12 +1,14 @@
 package jwtspring3.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Set;
 
 @Entity
-
+@Table(name = "users")
+@Data
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -14,14 +16,26 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    private Set<Role> roles;
+
     @Column(unique = true, nullable = false)
     private String username;
+
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     private String confirmPassword;
+
+    private String nickname;
+    private String avatar;
+    private double coin;
     private boolean enabled = true;
+
     public User(Long id, String username, String password, String confirmPassword, boolean enabled, Set<Role> roles) {
         this.id = id;
         this.username = username;
@@ -37,12 +51,6 @@ public class User implements Serializable {
         this.confirmPassword = confirmPassword;
         this.roles = roles;
     }
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    private Set<Role> roles;
 
     public User() {
     }
@@ -93,5 +101,29 @@ public class User implements Serializable {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public double getCoin() {
+        return coin;
+    }
+
+    public void setCoin(double coin) {
+        this.coin = coin;
     }
 }
